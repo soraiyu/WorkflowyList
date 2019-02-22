@@ -30,7 +30,7 @@ public class WFClient {
 
     public static final Logger log = Logger.getLogger(WFClient.class.getName());
 
-    public static final String LOGIN_URL = "https://workflowy.com/accounts/login/";
+    public static final String LOGIN_URL = "https://workflowy.com/ajax_login";
     public static final String API_URL = "https://workflowy.com/%s";
     public static final String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36";
     public static final int TIMEOUT_MS = 2500;
@@ -342,10 +342,11 @@ public class WFClient {
 
         int code = res.code();
         Map<String, String> cookie = Utils.parseCookie(res.header("Set-Cookie"));
-        String locationHeader = res.header("Location");
+//        String locationHeader = res.header("Location");
         String sessionId = cookie.get("sessionid");
 
-        if (code != 302 || cookie.isEmpty() || !String.format(API_URL, "").equals(locationHeader) || sessionId == null) {
+        if (code != 200 || cookie.isEmpty() || sessionId == null) {
+//      if (code != 302 || cookie.isEmpty() || !String.format(API_URL, "").equals(locationHeader) || sessionId == null) {
             throw new BadLoginException();
         }
         synchronized (this) {
